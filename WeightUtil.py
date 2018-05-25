@@ -25,12 +25,12 @@ def validateWeigth(vGrams, vLbs, vOzs, fixed):
     :return:
     """
     if fixed == 1:
-        vOzs = vGrams / 453.6
+        vOzs = int(vGrams / 453.6 * 16 + 0.5)
         vLbs = int(vOzs / 16)
         vOzs = int(vOzs) - vLbs * 16
         return (vGrams, vLbs, vOzs)
     elif fixed == 2:
-        vGrams = int((vLbs * 16 + vOzs) * 453.6)
+        vGrams = int((vLbs * 16 + vOzs) * 453.6 / 16)
         return (vGrams, vLbs, vOzs)
     else:
         print("Not valid fixed weight values")
@@ -59,13 +59,28 @@ def validWeight(vG, vL, vO):
     if vG == None or vL == None or vO == None:
         return False
     # Now vG, vL and vO are numbers
-    L, O = validateWeigth(vG, vL, vO, 1)
+    G, L, O = validateWeigth(vG, vL, vO, 1)
     if (abs(L - vL) < 0.01) and (abs(O - vO) < 0.01):
         return True
     else:
-        raise ValidationError('Inconsistent grams vs lbs and ozs')
+        print(G, L, O)
+        print(vG, vL, vO)
+        print('Inconsistent grams vs lbs and ozs')
+        return False
 
-def validateWeightInputs(form, field):
+def validateMotherWeightInputs(form):
     return validWeight(form.pre_weight_grams.data, form.pre_weight_lbs.data, form.pre_weight_ozs.data) and \
            validWeight(form.delivery_weight_grams.data, form.delivery_weight_lbs.data, form.delivery_weight_ozs.data) and \
            validWeight(form.weight_gain_grams.data, form.weight_gain_lbs.data, form.weight_gain_ozs.data)
+
+def validateBabyWeightInputs(form):
+    g, l, o = form.birth_weight_grams.data, form.birth_weight_lbs.data, form.birth_weight_ozs.data
+    if g == None:
+        form.birth_weight_grams.data, form.birth_weight_lbs.data, form.birth_weight_ozs.data = validateWeigth(g, l, o, 2)
+        print("change grams", form.birth_weight_grams.data, form.birth_weight_lbs.data, form.birth_weight_ozs.data)
+    else:
+        form.birth_weight_grams.data, form.birth_weight_lbs.data, form.birth_weight_ozs.data = validateWeigth(g, l, o, 1)
+        print("change lbs and ozs", form.birth_weight_grams.data, form.birth_weight_lbs.data, form.birth_weight_ozs.data)
+    return True
+
+

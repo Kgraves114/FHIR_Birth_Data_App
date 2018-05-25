@@ -3,7 +3,7 @@ from flask_bootstrap import Bootstrap
 from SelectBabyForm import SelectBabyForm
 from BabyForm1 import BabyForm
 from MotherForm import MotherForm
-
+from WeightUtil import *
 
 import json
 import easygui
@@ -111,6 +111,33 @@ def babyInfo(id):
             #print("bornWithDays: %s" % bornWithDays)
             #return render_template('babylist.html', babies=babies, bornWithinDays=bornWithDays)
             return render_template('baby1.html', form=form, baby=id)
+    if request.method == 'POST':
+        print("Getting form for baby")
+        #print(request.form["birth_weight_grams"])
+        #print(form.birth_weight_grams)
+        #print(request.form.birth_weight_grams)
+        if not validateBabyWeightInputs(form):
+            easygui.msgbox("Inconsistent weight grams vs weight pounds and ounces!\nPlease correct the weight")
+            return render_template('baby1.html', form=form, baby=id)
+        print(form.birth_weight_grams)
+        print(form.birth_weight_lbs)
+        print(form.birth_weight_ozs)
+        print(request.form)
+
+        CODEFILE = "FHIR_resource_codes_1.txt"
+        codes = GetPatientInfo.getCODETABLE(file=CODEFILE, page='baby')
+        currentInformation = mapUDOHvaribleName(request.form, codes)
+        session['currentInformation'] = currentInformation
+        babyInformation = json.dumps(currentInformation, indent=4, sort_keys=True)
+        #print("baby result form is a ", type(request.form))
+        #print("Dumpint baby info")
+        #print(babyInformation)
+        easygui.msgbox(babyInformation)
+        print( "The mother id", request.form['mother_id'])
+        if request.form['mother_id'] == None or request.form['mother_id'] == '':
+            easygui.msgbox("Mother ID required!")
+            return redirect('baby/' + session.get('currentBaby'))
+        return redirect('motherinfo/'+request.form['mother_id'])
     #if request.method == "POST":
     #    print("Dumping form")
     #    json.dumps(form)

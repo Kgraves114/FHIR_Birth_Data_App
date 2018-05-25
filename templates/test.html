@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+   <body>
+   
+      <h2 style = "text-align: center;">  </h2>
+
+      <form action = "http://localhost:5000/testresult" method = post>
+         <fieldset>
+            <legend>Mother</legend>
+            {{ form.hidden_tag() }}
+            
+            <div style = font-size:20px; font-weight:bold; margin-left:150px;>
+
+               {{ form.birth_weight_grams.label }} {{ form.birth_weight_grams }}
+               <br>
+               {{ form.newborn_first_name.label }} {{ form.newborn_first_name }}
+               <br>
+               {{ form.newborn_family_name.label }} {{ form.newborn_family_name }}
+               <br>
+               {{ form.apgar5m_score.label }} {{ form.apgar5m_score }}
+               <br>
+               {{ form.hidden }}
+               <br>
+
+               {{ form.motherid }} {{ form.showjson }}
+
+
+
+               {{ form.submit }}
+
+            </div>
+            
+         </fieldset>
+      </form>
+      
+   </body>
+</html>
